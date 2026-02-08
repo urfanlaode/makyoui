@@ -13,6 +13,7 @@ import {
   searchInputVariants,
   selectDropdownVariants,
 } from './select-dropdown.variants'
+import { Label } from '../label'
 
 export interface Option {
   value: string | number
@@ -41,6 +42,8 @@ export interface SelectDropdownProps extends VariantProps<typeof selectDropdownV
 
   onOpen?: () => void
   onClose?: () => void
+
+  label?: string
 }
 
 const SelectDropdown = forwardRef<HTMLButtonElement, SelectDropdownProps>(
@@ -62,6 +65,7 @@ const SelectDropdown = forwardRef<HTMLButtonElement, SelectDropdownProps>(
       withPortal = true,
       onOpen,
       onClose,
+      label,
     },
     ref
   ) => {
@@ -222,60 +226,70 @@ const SelectDropdown = forwardRef<HTMLButtonElement, SelectDropdownProps>(
     )
 
     return (
-      <div className={cn('relative w-full', className)}>
-        {/* Select Button */}
-        <button
-          ref={triggerRef}
-          type="button"
-          id={id}
-          onClick={toggleDropdown}
-          disabled={disabled}
-          className={cn(selectDropdownVariants({ variant, size }))}
-        >
-          <span className={cn('flex-1 text-left', !multiple && 'truncate')}>
-            {multiple && selectedValues.length > 0 ? (
-              <div className="flex flex-wrap gap-1">
-                {getSelectedOptions().map((option) => (
-                  <Chip
-                    key={getOptionValue(option)}
-                    variant="default"
-                    closeable
-                    onClose={() => handleRemoveItem(getOptionValue(option))}
-                  >
-                    {getOptionLabel(option)}
-                  </Chip>
-                ))}
-              </div>
-            ) : (
-              <span className={selectedValues.length === 0 ? 'text-gray-400' : ''}>
-                {getDisplayText()}
-              </span>
-            )}
-          </span>
-        </button>
+      <div className={cn('flex gap-4 items-center')}>
+        {/* Label */}
+        {label && (
+          <Label htmlFor={id} disabled={disabled} className="w-1/3">
+            {label}
+          </Label>
+        )}
 
-        {/* Dropdown Menu */}
-        {isOpen &&
-          (withPortal ? (
-            // Portal element
-            createPortal(
-              <div
-                ref={dropdownRef}
-                className={cn(portalDropdownMenuVariants())}
-                style={portal.style}
-              >
+        {/* Select */}
+        <div className={cn('relative w-2/3', className)}>
+          {/* Select Button */}
+          <button
+            ref={triggerRef}
+            type="button"
+            id={id}
+            onClick={toggleDropdown}
+            disabled={disabled}
+            className={cn(selectDropdownVariants({ variant, size }))}
+          >
+            <span className={cn('flex-1 text-left', !multiple && 'truncate')}>
+              {multiple && selectedValues.length > 0 ? (
+                <div className="flex flex-wrap gap-1">
+                  {getSelectedOptions().map((option) => (
+                    <Chip
+                      key={getOptionValue(option)}
+                      variant="default"
+                      closeable
+                      onClose={() => handleRemoveItem(getOptionValue(option))}
+                    >
+                      {getOptionLabel(option)}
+                    </Chip>
+                  ))}
+                </div>
+              ) : (
+                <span className={selectedValues.length === 0 ? 'text-gray-400' : ''}>
+                  {getDisplayText()}
+                </span>
+              )}
+            </span>
+          </button>
+
+          {/* Dropdown Menu */}
+          {isOpen &&
+            (withPortal ? (
+              // Portal element
+              createPortal(
+                <div
+                  ref={dropdownRef}
+                  className={cn(portalDropdownMenuVariants())}
+                  style={portal.style}
+                >
+                  {/* Dropdown content */}
+                  {renderDropdownContent()}
+                </div>,
+                document.body
+              )
+            ) : (
+              // Non-portal element
+              <div ref={dropdownRef} className={cn(dropdownMenuVariants())}>
                 {/* Dropdown content */}
                 {renderDropdownContent()}
-              </div>,
-              document.body
-            )
-          ) : (
-            // Non-portal element
-            <div ref={dropdownRef} className={cn(dropdownMenuVariants())}>
-              {/* Dropdown content */}
-              {renderDropdownContent()}
-            </div>
-          ))}
+              </div>
+            ))}
+        </div>
       </div>
     )
   }
