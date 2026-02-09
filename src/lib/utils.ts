@@ -34,3 +34,10 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
     currency,
   }).format(amount)
 }
+
+/**
+ * Escape special regex characters in a string
+ */
+export function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
