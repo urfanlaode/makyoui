@@ -65,7 +65,7 @@ const SelectDropdown = forwardRef<HTMLButtonElement, SelectDropdownProps>(
       withPortal = true,
       onOpen,
       onClose,
-      label,
+      label = 'Label',
     },
     ref
   ) => {
