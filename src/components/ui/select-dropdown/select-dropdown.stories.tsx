@@ -57,7 +57,7 @@ export const Default: Story = {
     const [value, setValue] = useState<number | undefined>(undefined)
     return (
       <div className="space-y-4">
-        <SelectDropdown {...args} value={value} onChange={setValue} label="Label" />
+        <SelectDropdown {...args} value={value} onChange={setValue} />
       </div>
     )
   },
